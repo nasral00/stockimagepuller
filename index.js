@@ -1,47 +1,58 @@
+/*
+Nasr Almansoob
+01-15-2022
+This API is able to download up to 100 free stock images of your choice 
+*/
+
 const express = require("express");
-const axios = require("axios");
-const cheerio = require("cheerio");
 const request = require("request");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const fs = require("fs");
+const path = require("path");
+const favicon = require("serve-favicon");
 
 const app = express();
 const PORT = 8080;
 
-// puppeteer.use(StealthPlugin());
+// Puppeteer runs in stealth mode - look more like a bot when accessing the web
+puppeteer.use(StealthPlugin());
 
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+// Root endpoint explaining what this API does
 app.get("/", (req, res) => {
   res.json(
-    "Hello, welcome to the pexels auto download API, here is the use case: access this endpoint to download images from pexels '/endpoint name'"
+    "Hello, welcome to the pexels auto download API, here is the use case: access this endpoint to download images from unsplash '/endpoint name'"
   );
 });
 
+// searchQuery parameter is the name of the search you would like to make. e.g.
 app.get("/:searchQuery", (req, res) => {
-  let $;
   let requestParam = req.params.searchQuery;
-  let count = 0;
-  let images = [];
 
+  // Download function consist of a url, download path, and callback function after the download has completed
   const download = (url, path, callback) => {
     request.head(url, (err, res, body) => {
       request(url).pipe(fs.createWriteStream(path)).on("close", callback);
     });
   };
+
+  // Checks if the download path for this search exists, if not creates the directory
   fs.mkdir(`./downloads/${requestParam}`, () => {
-    console.log("created directory");
+    console.log("created directory", requestParam);
   });
 
+  // Puppeteer stuff
   (async () => {
-    const browser = await puppeteer.launch({
-      headless: "false",
-      executablePath: "/Users/notrandom/Downloads/Chromium/Chromium.app",
-    });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
+    // Navigates to page
     await page.goto(
       `https://unsplash.com/s/photos/${requestParam}?orientation=landscape`
     );
+
+    // There is a specific button that needs to be clicked to load more images to the page, if it does exist - click button
     if (
       (await page.$(
         "button.CwMIr.DQBsa.p1cWU.jpBZ0.AYOsT.Olora.I0aPD.dEcXu"
@@ -55,7 +66,10 @@ app.get("/:searchQuery", (req, res) => {
       );
     }
 
+    // Scrolling function to find more images, as unsplash lazy loads images
     await autoScroll(page);
+
+    // Creates an array from the image source - extracting the url and the decription of image.
     const images = await page.evaluate(() => {
       const srcs = Array.from(
         document.querySelectorAll("div.mItv1 img.YVj9w")
@@ -66,47 +80,55 @@ app.get("/:searchQuery", (req, res) => {
       });
       return srcs;
     });
+
+    //Count is used to specify how many images to download
     let count = 0;
     await images.forEach((item) => {
       if (count <= 100) {
+        if (item.alt == null) {
+          item.alt = "no description " + count;
+        }
         download(
           item.source,
           `./downloads/${requestParam}/${item.alt}.png`,
           () => {}
         );
 
-        console.log("done snap", item.alt, count);
+        console.log("done", item.alt, count);
       } else {
         return false;
       }
       count++;
     });
-
-    await page.screenshot({ path: "test.png", fullPage: true });
-    console.log("done");
+    console.log(`Downloaded ${count} images`);
     await browser.close();
   })();
-
-  async function autoScroll(page) {
-    await page.evaluate(async () => {
-      await new Promise((resolve, reject) => {
-        var totalHeight = 0;
-        var distance = 5000;
-        var timer = setInterval(() => {
-          var scrollHeight = 45269;
-          window.scrollBy(0, distance);
-          totalHeight += distance;
-
-          if (totalHeight >= scrollHeight) {
-            clearInterval(timer);
-            resolve();
-          }
-        }, 400);
-      });
-    });
+  if (res.status(200)) {
+    return res.json("Success");
+  } else {
+    return res.json(res.status);
   }
 });
 
 app.listen(PORT, () => {
   console.log("App running on port", PORT);
 });
+
+async function autoScroll(page) {
+  await page.evaluate(async () => {
+    await new Promise((resolve, reject) => {
+      var totalHeight = 0;
+      var distance = 5000;
+      var timer = setInterval(() => {
+        var scrollHeight = 45269;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
+
+        if (totalHeight >= scrollHeight) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 400);
+    });
+  });
+}
