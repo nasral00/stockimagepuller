@@ -117,10 +117,6 @@ app.get("/:searchQuery", (req, res) => {
   })();
 });
 
-app.listen(PORT, () => {
-  console.log("App running on port", PORT);
-});
-
 //Function to auto scroll page loading more images
 // Moves the distance until total height > scrollHeight set or the end of page reached
 async function autoScroll(page) {
@@ -142,3 +138,7 @@ async function autoScroll(page) {
     });
   });
 }
+
+app.listen(process.env.PORT || PORT, () => {
+  console.log("App running");
+});
