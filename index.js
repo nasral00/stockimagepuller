@@ -18,7 +18,7 @@ const PORT = 8080;
 // Puppeteer runs in stealth mode - look more like a bot when accessing the web
 puppeteer.use(StealthPlugin());
 
-app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+app.use(favicon(path.join(__dirname, "/", "favicon.ico")));
 // Root endpoint explaining what this API does
 app.get("/", (req, res) => {
   res.json({
@@ -140,6 +140,6 @@ async function autoScroll(page) {
 }
 
 const server = app.listen(process.env.PORT || PORT, () => {
-  const port = server.address.port();
+  const port = server.address().port;
   console.log("App running on ", port);
 });
