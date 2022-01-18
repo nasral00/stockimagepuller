@@ -21,9 +21,12 @@ puppeteer.use(StealthPlugin());
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 // Root endpoint explaining what this API does
 app.get("/", (req, res) => {
-  res.json(
-    "Hello, welcome to the pexels auto download API, here is the use case: access this endpoint to download images from unsplash '/endpoint name'"
-  );
+  res.json({
+    intro:
+      "Hello, welcome to the unsplash auto download API, here is the use case: append your search to this endpoint to download images from unsplash '/endpoint name'",
+    filters:
+      "You can also filter by: orientation{landscape/portrait}, just append ?{orientationType}",
+  });
 });
 
 // searchQuery parameter is the name of the search you would like to make. e.g.
@@ -47,10 +50,14 @@ app.get("/:searchQuery", (req, res) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
+    if (req.query.orientation) {
+      await page.goto(
+        `https://unsplash.com/s/photos/${requestParam}?orientation=${req.query.orientation}`
+      );
+    } else {
+      await page.goto(`https://unsplash.com/s/photos/${requestParam}`);
+    }
     // Navigates to page
-    await page.goto(
-      `https://unsplash.com/s/photos/${requestParam}?orientation=landscape`
-    );
 
     // There is a specific button that needs to be clicked to load more images to the page, if it does exist - click button
     if (
@@ -72,7 +79,7 @@ app.get("/:searchQuery", (req, res) => {
     // Creates an array from the image source - extracting the url and the decription of image.
     const images = await page.evaluate(() => {
       const srcs = Array.from(
-        document.querySelectorAll("div.mItv1 img.YVj9w")
+        document.querySelectorAll("div.VQW0y.Jl9NH img.YVj9w")
       ).map((image) => {
         let source = image.getAttribute("src");
         let alt = image.getAttribute("alt");
@@ -102,33 +109,36 @@ app.get("/:searchQuery", (req, res) => {
     });
     console.log(`Downloaded ${count} images`);
     await browser.close();
+    if (res.status(200)) {
+      return res.json("Success");
+    } else {
+      return res.json(res.status);
+    }
   })();
-  if (res.status(200)) {
-    return res.json("Success");
-  } else {
-    return res.json(res.status);
-  }
 });
 
 app.listen(PORT, () => {
   console.log("App running on port", PORT);
 });
 
+//Function to auto scroll page loading more images
+// Moves the distance until total height > scrollHeight set or the end of page reached
 async function autoScroll(page) {
   await page.evaluate(async () => {
     await new Promise((resolve, reject) => {
       var totalHeight = 0;
       var distance = 5000;
+
       var timer = setInterval(() => {
-        var scrollHeight = 45269;
+        var scrollHeight = 145269;
         window.scrollBy(0, distance);
         totalHeight += distance;
-
+        console.log(totalHeight, scrollHeight);
         if (totalHeight >= scrollHeight) {
           clearInterval(timer);
           resolve();
         }
-      }, 400);
+      }, 500);
     });
   });
 }
