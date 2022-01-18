@@ -139,6 +139,7 @@ async function autoScroll(page) {
   });
 }
 
-app.listen(process.env.PORT || PORT, () => {
-  console.log("App running");
+const server = app.listen(process.env.PORT || PORT, () => {
+  const port = server.address.port();
+  console.log("App running on ", port);
 });
