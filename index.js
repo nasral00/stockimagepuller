@@ -44,7 +44,11 @@ app.get("/:searchQuery", (req, res) => {
   fs.mkdir(`./downloads/${requestParam}`, () => {
     console.log("created directory", requestParam);
   });
-
+  if (res.status(200)) {
+    return res.json("Success");
+  } else {
+    return res.json(res.status);
+  }
   // Puppeteer stuff
   (async () => {
     const browser = await puppeteer.launch();
@@ -104,11 +108,6 @@ app.get("/:searchQuery", (req, res) => {
     });
     console.log(`Downloaded ${count} images`);
     await browser.close();
-    if (res.status(200)) {
-      return res.json("Success");
-    } else {
-      return res.json(res.status);
-    }
   })();
 });
 
