@@ -43,7 +43,7 @@ app.get("/:searchQuery", (req, res) => {
 
   fs.mkdir(path.join(homedir, "downloads"));
   // Checks if the download path for this search exists, if not creates the directory
-  fs.mkdir(`${homedir}/downloads/${requestParam}`, () => {
+  fs.mkdir(`${homedir}/unsplashdownloads/${requestParam}`, () => {
     console.log("created directory", requestParam);
   });
 
@@ -96,7 +96,7 @@ app.get("/:searchQuery", (req, res) => {
         }
         download(
           item.source,
-          `${homedir}/downloads/${requestParam}/${item.alt}.png`,
+          `${homedir}/unsplashdownloads/${requestParam}/${item.alt}.png`,
           () => {}
         );
 
