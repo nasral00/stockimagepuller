@@ -39,9 +39,11 @@ app.get("/:searchQuery", (req, res) => {
       request(url).pipe(fs.createWriteStream(path)).on("close", callback);
     });
   };
+  const homedir = require("os").homedir();
 
+  fs.mkdir(path.join(homedir, "downloads"));
   // Checks if the download path for this search exists, if not creates the directory
-  fs.mkdir(`./downloads/${requestParam}`, () => {
+  fs.mkdir(`${homedir}/downloads/${requestParam}`, () => {
     console.log("created directory", requestParam);
   });
 
@@ -94,7 +96,7 @@ app.get("/:searchQuery", (req, res) => {
         }
         download(
           item.source,
-          `./downloads/${requestParam}/${item.alt}.png`,
+          `${homedir}/downloads/${requestParam}/${item.alt}.png`,
           () => {}
         );
 
