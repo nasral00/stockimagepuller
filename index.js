@@ -50,13 +50,8 @@ app.get("/:searchQuery", (req, res) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
-    if (req.query.orientation) {
-      await page.goto(
-        `https://unsplash.com/s/photos/${requestParam}?orientation=${req.query.orientation}`
-      );
-    } else {
-      await page.goto(`https://unsplash.com/s/photos/${requestParam}`);
-    }
+
+    await page.goto(`https://unsplash.com/s/photos/${requestParam}`);
     // Navigates to page
 
     // There is a specific button that needs to be clicked to load more images to the page, if it does exist - click button
