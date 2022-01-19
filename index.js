@@ -41,7 +41,9 @@ app.get("/:searchQuery", (req, res) => {
   };
   const homedir = require("os").homedir();
 
-  fs.mkdir(path.join(homedir, "downloads"));
+  fs.mkdir(path.join(homedir, "downloads"), () => {
+    console.log("created downloads directory");
+  });
   // Checks if the download path for this search exists, if not creates the directory
   fs.mkdir(`${homedir}/unsplashdownloads/${requestParam}`, () => {
     console.log("created directory", requestParam);
