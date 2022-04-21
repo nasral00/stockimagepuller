@@ -39,21 +39,20 @@ app.get("/:searchQuery", (req, res) => {
       request(url).pipe(fs.createWriteStream(path)).on("close", callback);
     });
   };
-  const homedir = require("os").homedir();
 
-  fs.mkdir(path.join(homedir, "downloads"), () => {
+  fs.mkdir("./downloads", () => {
     console.log("created downloads directory");
   });
+
+  let homedir = "./downloads";
   // Checks if the download path for this search exists, if not creates the directory
-  fs.mkdir(`${homedir}/unsplashdownloads/${requestParam}`, () => {
+  fs.mkdir(`${homedir}/${requestParam}`, () => {
     console.log("created directory", requestParam);
   });
 
   // Puppeteer stuff
   (async () => {
-    const browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
 
@@ -98,7 +97,7 @@ app.get("/:searchQuery", (req, res) => {
         }
         download(
           item.source,
-          `${homedir}/unsplashdownloads/${requestParam}/${item.alt}.png`,
+          `${homedir}/${requestParam}/${item.alt}.png`,
           () => {}
         );
 
@@ -124,10 +123,10 @@ async function autoScroll(page) {
   await page.evaluate(async () => {
     await new Promise((resolve, reject) => {
       var totalHeight = 0;
-      var distance = 5000;
+      var distance = 3000;
 
       var timer = setInterval(() => {
-        var scrollHeight = 145269;
+        var scrollHeight = 250000;
         window.scrollBy(0, distance);
         totalHeight += distance;
         console.log(totalHeight, scrollHeight);
