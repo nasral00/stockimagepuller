@@ -45,7 +45,7 @@ app.get("/:searchQuery", (req, res) => {
   });
 
   let homedir = "./downloads";
-  // Checks if the download path for this search exists, if not creates the directory
+
   fs.mkdir(`${homedir}/${requestParam}`, () => {
     console.log("created directory", requestParam);
   });
