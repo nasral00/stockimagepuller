@@ -1,7 +1,5 @@
 # Stock Image Scraper
 
-This API scrapes unsplash.com and downloads stock images to your device
-
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
@@ -20,11 +18,7 @@ This API scrapes unsplash.com and downloads stock images to your device
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -32,9 +26,7 @@ This API scrapes unsplash.com and downloads stock images to your device
 
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+This API scrapes unsplash.com and downloads stock images to your device
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -54,7 +46,7 @@ To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+Run these commands to install the proper dependencies
 
 - npm
   ```sh
@@ -113,6 +105,6 @@ Don't forget to give the project a star! Thanks again!
 
 ## Contact
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/nasral00/stockimagescraper](https://github.com/nasral00/stockimagescraper)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
